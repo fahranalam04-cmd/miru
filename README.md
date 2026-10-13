@@ -9,7 +9,7 @@
 ## What it does
 
 - **Per-season tracking, no episode counting.** Add a show and click "I'm on S3": seasons 1–2 are marked watched and S3 watching. A single "Finished S3 ✓" button moves you forward.
-- **Rate every season** on a 1–10 scale, next to AniList's community score.
+- **Rate every season** from 1.0 to 10.0, decimals included (pick 8, then .7, or just type 8.7). Your score sits next to AniList's community score.
 - **Shorthand search.** `jjk` finds Jujutsu Kaisen, `fmab` finds Fullmetal Alchemist: Brotherhood, `aot` finds Attack on Titan. Typos fall back to a looser search.
 - **Always current.** Data comes live from AniList. When a sequel is announced or starts airing, your finished shows get a **NEW SEASON** badge, and airing seasons show a countdown to the next episode.
 - **Recommendations with reasons.** "98% match: because you liked Vinland Saga." See [how it works](#how-recommendations-work).

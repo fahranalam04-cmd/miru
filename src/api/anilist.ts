@@ -134,7 +134,7 @@ export interface ListEntry {
 
 export async function fetchUserList(userId: number): Promise<ListEntry[]> {
   const d = await gql<{ MediaListCollection: { lists: { entries: ListEntry[] }[] } }>(
-    `query($u:Int){MediaListCollection(userId:$u,type:ANIME){lists{entries{id mediaId status score(format:POINT_10) updatedAt media{${MEDIA_FIELDS}}}}}}`,
+    `query($u:Int){MediaListCollection(userId:$u,type:ANIME){lists{entries{id mediaId status score(format:POINT_100) updatedAt media{${MEDIA_FIELDS}}}}}}`,
     { u: userId },
   );
   return d.MediaListCollection.lists.flatMap(l => l.entries);

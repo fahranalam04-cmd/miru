@@ -130,7 +130,7 @@ async function pull() {
     putMedia(list.map(e => e.media));
     const entries: Record<number, Entry> = {};
     for (const e of list) {
-      entries[e.mediaId] = { status: FROM_AL[e.status] ?? 'watching', score: e.score || null, updatedAt: e.updatedAt * 1000, listId: e.id };
+      entries[e.mediaId] = { status: FROM_AL[e.status] ?? 'watching', score: e.score ? e.score / 10 : null, updatedAt: e.updatedAt * 1000, listId: e.id };
     }
     // Edits made here that never reached AniList, plus anything tracked before signing in.
     const unsaved = Object.entries(state.entries).filter(([, e]) => e.dirty);

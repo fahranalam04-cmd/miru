@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Media } from '../api/anilist';
-import { title } from '../lib/format';
+import { fmtScore, title } from '../lib/format';
 import type { Status } from '../lib/store';
 
 // Grayscale + halftone image that blooms into color on hover.
@@ -59,17 +59,46 @@ export function RatingPicker({ value, onChange }: { value: number | null; onChan
     return () => removeEventListener('mousedown', close);
   }, [open]);
 
+  // Scores run 1.0–10.0 in steps of 0.1: pick the whole number, then optionally the decimal.
+  const whole = value == null ? null : Math.floor(value);
+  const tenth = value == null ? 0 : Math.round((value - Math.floor(value)) * 10);
+  const commit = (n: number | null, close = false) => {
+    onChange(n == null ? null : Math.min(10, Math.max(1, Math.round(n * 10) / 10)));
+    if (close) setOpen(false);
+  };
+
   return (
     <div className="rating" ref={ref}>
       <button className={`score you${value == null ? ' unset' : ''}`} onClick={() => setOpen(o => !o)} aria-label="Your rating">
-        {value ?? '—'}<small>YOU</small>
+        {fmtScore(value)}<small>YOU</small>
       </button>
       {open && (
-        <div className="rate-pop">
-          {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
-            <button key={n} className={n === value ? 'on' : ''} onClick={() => { onChange(n); setOpen(false); }}>{n}</button>
-          ))}
-          {value != null && <button className="clear" onClick={() => { onChange(null); setOpen(false); }}>clear</button>}
+        <div className="rate-pop" onKeyDown={e => e.key === 'Escape' && setOpen(false)}>
+          <div className="rate-now">{value == null ? '—' : value.toFixed(1)}</div>
+          <span className="rate-label">SCORE</span>
+          <div className="rate-row">
+            {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
+              <button key={n} className={n === whole ? 'on' : ''} onClick={() => commit(n === 10 ? 10 : n + tenth / 10)}>{n}</button>
+            ))}
+          </div>
+          <span className="rate-label">DECIMAL</span>
+          <div className="rate-row tenths">
+            {Array.from({ length: 10 }, (_, d) => (
+              <button key={d} className={whole != null && d === tenth ? 'on' : ''} disabled={whole == null || whole === 10}
+                onClick={() => commit(whole! + d / 10, true)}>.{d}</button>
+            ))}
+          </div>
+          <div className="rate-foot">
+            <input
+              type="number" min={1} max={10} step={0.1} placeholder="or type 8.7" aria-label="Type a score"
+              onKeyDown={e => {
+                const n = parseFloat(e.currentTarget.value);
+                if (e.key === 'Enter' && !Number.isNaN(n)) commit(n, true);
+              }}
+            />
+            {value != null && <button className="clear" onClick={() => commit(null, true)}>clear</button>}
+            <button className="done" onClick={() => setOpen(false)}>done</button>
+          </div>
         </div>
       )}
     </div>
