@@ -13,12 +13,12 @@ const DAY = 86400_000;
 
 function cached<T>(key: string, ttl: number, load: () => Promise<T>): Promise<T> {
   let all: Record<string, { t: number; v: T }> = {};
-  try { all = JSON.parse(localStorage.getItem(REC_KEY) || '{}'); } catch {}
+  try { all = JSON.parse(localStorage.getItem(REC_KEY) || '{}'); } catch { /* storage unavailable: ignore */ }
   const hit = all[key];
   if (hit && Date.now() - hit.t < ttl) return Promise.resolve(hit.v);
   return load().then(v => {
     all[key] = { t: Date.now(), v };
-    try { localStorage.setItem(REC_KEY, JSON.stringify(all)); } catch {}
+    try { localStorage.setItem(REC_KEY, JSON.stringify(all)); } catch { /* storage unavailable: ignore */ }
     return v;
   });
 }

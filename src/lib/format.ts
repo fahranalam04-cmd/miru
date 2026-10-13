@@ -24,6 +24,6 @@ export const isAired = (m: Media) => m.status === 'FINISHED' || m.status === 'RE
 
 // Native title for the vertical ink column: first phrase, shrunk to fit the panel height.
 export function verticalTitle(native: string | null | undefined): { text: string; size: number } {
-  const text = (native ?? '').split(/[\s　:：]/)[0].slice(0, 14);
+  const text = (native ?? '').split(/[\s\u3000:：]/)[0].slice(0, 14);
   return { text, size: Math.max(16, Math.min(34, Math.floor(330 / Math.max(1, text.length)))) };
 }

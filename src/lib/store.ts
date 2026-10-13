@@ -42,7 +42,7 @@ function set(patch: Partial<State>) {
   subs.forEach(fn => fn());
 }
 function saveEntries() {
-  try { localStorage.setItem(entriesKey(state.user), JSON.stringify(state.entries)); } catch {}
+  try { localStorage.setItem(entriesKey(state.user), JSON.stringify(state.entries)); } catch { /* storage unavailable: ignore */ }
 }
 
 const bump = () => set({ tick: state.tick + 1 });
@@ -96,14 +96,14 @@ export async function init() {
   }
 
   let saved: { t: string; exp: number } | null = null;
-  try { saved = JSON.parse(localStorage.getItem(TOKEN_KEY) || 'null'); } catch {}
+  try { saved = JSON.parse(localStorage.getItem(TOKEN_KEY) || 'null'); } catch { /* storage unavailable: ignore */ }
 
   if (saved && saved.exp > Date.now()) {
     al.setToken(saved.t);
     try {
       const cached = JSON.parse(localStorage.getItem(USER_KEY) || 'null') as User | null;
       if (cached) set({ user: cached, entries: loadEntries(cached) });
-    } catch {}
+    } catch { /* storage unavailable: ignore */ }
     try {
       const v = await al.fetchViewer();
       const user = { id: v.id, name: v.name, avatar: v.avatar.medium };

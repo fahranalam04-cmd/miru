@@ -5,7 +5,7 @@ import { init } from './lib/store';
 import './styles.css';
 
 // Loaded fine: re-arm the stale-cache reload in index.html and drop its ?v= cache-buster.
-try { sessionStorage.removeItem('miru:reloaded'); } catch {}
+try { sessionStorage.removeItem('miru:reloaded'); } catch { /* storage unavailable: ignore */ }
 if (location.search) history.replaceState(null, '', location.pathname + location.hash);
 
 init();

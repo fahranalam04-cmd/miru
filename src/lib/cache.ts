@@ -11,7 +11,7 @@ const listeners = new Set<() => void>();
 try {
   const raw = JSON.parse(localStorage.getItem(KEY) || '{}') as Record<string, Cached>;
   for (const [k, v] of Object.entries(raw)) mem.set(Number(k), v);
-} catch {}
+} catch { /* storage unavailable: ignore */ }
 
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
 function persist() {
@@ -22,7 +22,7 @@ function persist() {
     } catch {
       // Over quota: drop the oldest half and try once more.
       [...mem.entries()].sort((a, b) => a[1].t - b[1].t).slice(0, mem.size / 2).forEach(([id]) => mem.delete(id));
-      try { localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(mem))); } catch {}
+      try { localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(mem))); } catch { /* storage unavailable: ignore */ }
     }
   }, 400);
 }

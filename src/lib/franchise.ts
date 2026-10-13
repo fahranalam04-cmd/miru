@@ -21,10 +21,10 @@ const listeners = new Set<() => void>();
 try {
   const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
   if (raw) ({ franchises, memberOf } = raw);
-} catch {}
+} catch { /* storage unavailable: ignore */ }
 
 function save() {
-  try { localStorage.setItem(KEY, JSON.stringify({ franchises, memberOf })); } catch {}
+  try { localStorage.setItem(KEY, JSON.stringify({ franchises, memberOf })); } catch { /* storage unavailable: ignore */ }
   listeners.forEach(fn => fn());
 }
 
