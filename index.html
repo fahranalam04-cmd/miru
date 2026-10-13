@@ -10,6 +10,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Kaisei+Decol:wght@700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet" />
     <title>MIRU · 見る記録</title>
+    <script>
+      // GitHub Pages lets browsers cache this page for 10 minutes. Right after a deploy, a cached
+      // copy points at a script that no longer exists, so reload once, bypassing the cache.
+      addEventListener('error', function (e) {
+        var t = e.target;
+        if (!t || t.tagName !== 'SCRIPT' || !/\/assets\//.test(t.src)) return;
+        try { if (sessionStorage.getItem('miru:reloaded')) return; sessionStorage.setItem('miru:reloaded', '1'); } catch (_) {}
+        location.replace(location.pathname + '?v=' + Date.now() + location.hash);
+      }, true);
+    </script>
   </head>
   <body>
     <div id="root"></div>
