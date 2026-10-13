@@ -120,11 +120,30 @@ export async function init() {
 
   // Refetch stale media in the background; this is also how newly announced seasons show up.
   resolveFranchises(Object.keys(state.entries).map(Number)).catch(() => {});
+
+  // Pick up edits made on AniList itself (another device, the AniList app) when you come back to the tab.
+  const refresh = () => {
+    if (document.visibilityState === 'visible' && state.user && Date.now() - lastPull > 30_000) pull(true).catch(() => {});
+  };
+  document.addEventListener('visibilitychange', refresh);
+  addEventListener('focus', refresh);
 }
 
-async function pull() {
+let pulling: Promise<void> | null = null;
+let lastPull = 0;
+const fingerprint = (es: Record<number, Entry>) =>
+  Object.keys(es).sort().map(id => `${id}:${es[+id].status}:${es[+id].score}`).join('|');
+
+function pull(quiet = false): Promise<void> {
+  pulling ??= doPull(quiet).finally(() => { pulling = null; lastPull = Date.now(); });
+  return pulling;
+}
+
+async function doPull(quiet: boolean) {
   const user = state.user!;
-  set({ busy: 'Syncing with AniList…' });
+  const startedAt = Date.now();
+  const before = fingerprint(state.entries);
+  if (!quiet) set({ busy: 'Syncing with AniList…' });
   try {
     const list = await al.fetchUserList(user.id);
     putMedia(list.map(e => e.media));
@@ -132,8 +151,10 @@ async function pull() {
     for (const e of list) {
       entries[e.mediaId] = { status: FROM_AL[e.status] ?? 'watching', score: e.score ? e.score / 10 : null, updatedAt: e.updatedAt * 1000, listId: e.id };
     }
+    // Anything you changed here while the list was downloading wins; apply() is already saving it.
+    for (const [id, e] of Object.entries(state.entries)) if (e.updatedAt >= startedAt) entries[+id] = e;
     // Edits made here that never reached AniList, plus anything tracked before signing in.
-    const unsaved = Object.entries(state.entries).filter(([, e]) => e.dirty);
+    const unsaved = Object.entries(state.entries).filter(([, e]) => e.dirty && e.updatedAt < startedAt);
     const signedOut = Object.entries(loadEntries(null)).filter(([id, e]) => !entries[+id] || e.updatedAt > entries[+id].updatedAt);
     const toPush = [...unsaved, ...signedOut].map(([id, e]) => {
       entries[+id] = { ...e, listId: entries[+id]?.listId, dirty: true };
@@ -141,6 +162,7 @@ async function pull() {
     });
     set({ entries });
     saveEntries();
+    if (quiet && fingerprint(entries) !== before) toast('Updated from AniList');
     if (toPush.length) {
       await pushMany(toPush);
       if (signedOut.length) {
@@ -150,7 +172,7 @@ async function pull() {
     }
     await resolveFranchises(Object.keys(entries).map(Number));
   } finally {
-    set({ busy: null });
+    if (!quiet) set({ busy: null });
   }
 }
 
