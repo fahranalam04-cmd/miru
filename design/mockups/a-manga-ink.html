@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIRU · Manga Ink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Kaisei+Decol:wght@700&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f2ede2;--ink:#111;--red:#d7261e;--tone:#bdb7aa}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:'Zen Kaku Gothic New',sans-serif;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* masthead */
+.mast{display:flex;align-items:center;gap:28px;padding:22px 0;border-bottom:6px double var(--ink);margin-bottom:28px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo b{font-family:'Dela Gothic One';font-size:44px;line-height:1;letter-spacing:-1px}
+.logo i{writing-mode:vertical-rl;font-style:normal;font-family:'Kaisei Decol';font-size:15px;background:var(--red);color:#fff;padding:4px 2px}
+nav{display:flex;gap:22px;font-weight:900;font-size:14px;letter-spacing:.12em}
+nav a{color:inherit;text-decoration:none;padding-bottom:3px}
+nav a.on{border-bottom:3px solid var(--red)}
+.bubble{margin-left:auto;position:relative;width:340px}
+.bubble input{width:100%;font:700 16px 'Zen Kaku Gothic New';padding:12px 20px;border:3px solid var(--ink);border-radius:50%/50%;background:#fff;outline:none}
+.bubble:after{content:'';position:absolute;left:38px;bottom:-14px;border:9px solid transparent;border-top:16px solid var(--ink);transform:skewX(-25deg)}
+.results{position:absolute;top:58px;left:0;right:0;background:#fff;border:3px solid var(--ink);box-shadow:7px 7px 0 var(--ink);z-index:5;display:none}
+.results.show{display:block}
+.results div{display:flex;gap:12px;align-items:center;padding:8px 10px;border-bottom:1px dashed var(--tone);cursor:pointer}
+.results div:hover{background:var(--paper)}
+.results img{width:38px;height:54px;filter:grayscale(1)}
+.results small{display:block;color:#666}
+
+/* panels */
+.panel{position:relative;border:4px solid var(--ink);background:#fff;overflow:hidden;box-shadow:6px 6px 0 var(--ink)}
+.panel .pic{position:absolute;inset:0}
+.panel .pic img{filter:grayscale(1) contrast(1.3) brightness(1.05);transition:filter .5s}
+.panel:hover .pic img{filter:none}
+.panel .pic:after{content:'';position:absolute;inset:0;background:radial-gradient(circle,#000 .9px,transparent 1.4px) 0 0/5px 5px;mix-blend-mode:multiply;opacity:.35;pointer-events:none;transition:opacity .5s}
+.panel:hover .pic:after{opacity:.08}
+.narr{position:absolute;background:#fff;border:3px solid var(--ink);padding:8px 12px;font-weight:700}
+
+/* hero */
+.hero{height:420px;display:grid;grid-template-columns:1fr 90px;transform:rotate(-.4deg)}
+.hero .pic{right:90px}
+.hero .vert{grid-column:2;border-left:4px solid var(--ink);background:var(--ink);color:var(--paper);writing-mode:vertical-rl;font:700 34px 'Kaisei Decol';display:flex;align-items:center;justify-content:center;letter-spacing:.15em}
+.hero .narr.top{top:20px;left:20px;max-width:420px}
+.hero h1{font:400 40px/1.05 'Dela Gothic One';margin:4px 0 6px}
+.kicker{font-size:12px;letter-spacing:.25em;color:var(--red);font-weight:900}
+.hero .narr.bot{bottom:20px;left:20px;display:flex;align-items:center;gap:16px}
+.tone-bar{width:220px;height:14px;border:2px solid var(--ink);background:repeating-linear-gradient(45deg,var(--tone) 0 2px,#fff 2px 5px)}
+.tone-bar span{display:block;height:100%;background:var(--ink)}
+.tbc{position:absolute;right:110px;bottom:22px;background:var(--red);color:#fff;font:400 18px 'Dela Gothic One';padding:10px 22px 10px 16px;clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%);cursor:pointer}
+
+h2{font:400 26px 'Dela Gothic One';margin:56px 0 20px;display:flex;align-items:baseline;gap:14px}
+h2 em{font:700 15px 'Kaisei Decol';font-style:normal;color:var(--red)}
+h2:after{content:'';flex:1;height:4px;background:var(--ink);align-self:center}
+
+/* library: irregular panel grid */
+.grid{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:150px;gap:16px}
+.grid .panel{cursor:pointer}
+.grid .narr{left:10px;bottom:10px;right:10px;font-size:13px}
+.grid .narr b{display:block;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{position:absolute;top:10px;right:10px;background:var(--ink);color:#fff;font:400 12px 'Dela Gothic One';padding:4px 8px}
+.chip.red{background:var(--red)}
+
+/* season table of contents */
+.toc{display:grid;grid-template-columns:300px 1fr;gap:28px}
+.toc .cover{height:420px;transform:rotate(1deg)}
+.toc ol{list-style:none;padding:0}
+.toc li{display:grid;grid-template-columns:70px 1fr auto auto;gap:18px;align-items:center;padding:16px 0;border-bottom:2px solid var(--ink)}
+.toc .num{font:400 38px 'Dela Gothic One'}
+.toc .ttl{font-weight:900;font-size:17px}
+.toc .ttl small{display:block;font-weight:400;color:#555;font-size:13px}
+.toc .ttl:after{content:'';display:block;margin-top:6px;border-bottom:2px dotted var(--tone)}
+.score{text-align:center;font:400 30px 'Dela Gothic One';min-width:70px}
+.score small{display:block;font:900 10px 'Zen Kaku Gothic New';letter-spacing:.2em}
+.score.you{color:var(--red)}
+.toc li.cur{background:repeating-linear-gradient(-45deg,transparent 0 6px,rgba(0,0,0,.06) 6px 8px)}
+.toc li.cur .num:after{content:' ◀';font-size:16px;color:var(--red)}
+
+/* recs: scattered volumes */
+.recs{display:flex;gap:0;padding:20px 0 10px;overflow-x:auto}
+.vol{flex:0 0 160px;height:240px;margin-right:-18px;border:4px solid var(--ink);box-shadow:5px 5px 0 var(--ink);position:relative;background:#fff;transition:transform .25s}
+.vol:nth-child(odd){transform:rotate(-3deg)}
+.vol:nth-child(even){transform:rotate(2.5deg) translateY(10px)}
+.vol:hover{transform:rotate(0) translateY(-14px) scale(1.04);z-index:3}
+.vol img{filter:grayscale(1) contrast(1.2)}
+.vol:hover img{filter:none}
+.vol span{position:absolute;bottom:0;left:0;right:0;background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:6px 8px}
+.why{margin-top:14px;font-size:14px}
+.why b{background:var(--ink);color:#fff;padding:1px 6px}
+
+.badge{position:fixed;bottom:14px;right:14px;background:var(--red);color:#fff;font:400 13px 'Dela Gothic One';padding:8px 14px;border:3px solid var(--ink)}
+@media(max-width:800px){.mast{flex-wrap:wrap}.bubble{width:100%}.grid{grid-template-columns:repeat(2,1fr)}.grid .panel{grid-column:auto!important;grid-row:auto!important}.toc{grid-template-columns:1fr}.hero{height:340px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="logo"><b>MIRU</b><i>見る記録</i></div>
+    <nav><a class="on" href="#">LIBRARY</a><a href="#">DISCOVER</a><a href="#">STATS</a></nav>
+    <div class="bubble"><input id="q" placeholder="who are we watching? (try jjk)"><div class="results" id="res"></div></div>
+  </header>
+
+  <section class="panel hero" id="hero"></section>
+
+  <h2>Your Library <em>第一章</em></h2>
+  <section class="grid" id="grid"></section>
+
+  <h2>Jujutsu Kaisen · Seasons <em>目次</em></h2>
+  <section class="toc" id="toc"></section>
+
+  <h2>Next Volume <em>おすすめ</em></h2>
+  <section class="recs" id="recs"></section>
+  <p class="why">Because you rated <b>Jujutsu Kaisen S2</b> a 10 and you lean toward <b>Action</b> + <b>Supernatural</b>.</p>
+</div>
+<div class="badge">MOCKUP A · MANGA INK</div>
+
+<script src="data.js"></script>
+<script>
+const spans=[[3,2],[3,1],[2,1],[2,2],[2,1],[2,1],[2,1],[3,1],[3,1],[2,1]];
+loadAnime().then(({lib,seasons,recs})=>{
+  const cur=seasons[seasons.length-1], me=ME[113415];
+  hero.innerHTML=`<div class="pic"><img src="${art(cur)}"></div>
+    <div class="vert">${esc(cur.title.native||'')}</div>
+    <div class="narr top"><div class="kicker">NOW WATCHING</div><h1>${esc(T(cur))}</h1>Season ${seasons.length} · ${esc(cur.studios.nodes[0]?.name||'')}</div>
+    <div class="narr bot">EP ${me.ep} / ${cur.episodes||'?'}<div class="tone-bar"><span style="width:${me.ep/(cur.episodes||12)*100}%"></span></div></div>
+    <div class="tbc">TO BE CONTINUED</div>`;
+
+  grid.innerHTML=lib.map((m,i)=>{const [c,r]=spans[i%spans.length],u=ME[m.id];
+    return `<div class="panel" style="grid-column:span ${c};grid-row:span ${r}">
+      <div class="pic"><img src="${r>1||c>2?art(m):m.coverImage.extraLarge}"></div>
+      <span class="chip ${u.status==='watching'?'red':''}">${STATUS[u.status]}</span>
+      <div class="narr"><b>${esc(T(m))}</b>${u.status==='plan'?'Not started':`Season ${seasonOf(m)}${u.ep?` · Ep ${u.ep}`:''}`} · ★ ${S(m)}</div></div>`}).join('');
+
+  toc.innerHTML=`<div class="panel cover"><div class="pic"><img src="${seasons[0].coverImage.extraLarge}"></div></div>
+    <ol>${seasons.map((s,i)=>{const mine=me.mine[i];return `<li class="${i===seasons.length-1?'cur':''}">
+      <span class="num">${String(i+1).padStart(2,'0')}</span>
+      <span class="ttl">${esc(T(s))}<small>${s.seasonYear||''} · ${s.episodes||'?'} eps · ${esc(s.studios.nodes[0]?.name||'')}</small></span>
+      <span class="score">${S(s)}<small>COMMUNITY</small></span>
+      <span class="score you">${mine??'—'}<small>YOU</small></span></li>`}).join('')}</ol>`;
+
+  document.getElementById('recs').innerHTML=recs.map(m=>`<div class="vol"><img src="${m.coverImage.extraLarge}"><span>${esc(T(m))}</span></div>`).join('');
+}).catch(e=>hero.innerHTML=`<div class="narr top">Couldn't reach AniList: ${esc(e.message)}</div>`);
+
+q.addEventListener('input',debounce(async()=>{
+  const r=await searchAnime(q.value).catch(()=>[]);
+  res.innerHTML=r.map(m=>`<div><img src="${m.coverImage.large}"><span><b>${esc(T(m))}</b><small>${m.seasonYear||''} · ${m.format||''} · ★ ${S(m)}</small></span></div>`).join('');
+  res.classList.toggle('show',r.length>0);
+}));
+</script>
+</body>
+</html>

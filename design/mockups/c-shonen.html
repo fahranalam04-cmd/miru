@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIRU · Shōnen Weekly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;800&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+<style>
+:root{--y:#ffd400;--r:#e60012;--k:#0b0b0b;--w:#fff;--b:#1747d1}
+*{box-sizing:border-box;margin:0}
+body{background:var(--y);color:var(--k);font-family:'Archivo',sans-serif;overflow-x:hidden}
+.speed{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.22;background:repeating-conic-gradient(from 0deg at 50% 30%,var(--k) 0 .6deg,transparent .6deg 4deg)}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px 90px}
+img{display:block;width:100%;height:100%;object-fit:cover}
+
+.mast{display:flex;align-items:flex-end;gap:18px;padding:20px 0 12px;border-bottom:8px solid var(--k);position:relative}
+.wk{background:var(--r);color:#fff;font:400 22px 'Mochiy Pop One';padding:8px 10px;writing-mode:vertical-rl;border:4px solid var(--k)}
+.title{font:400 96px/0.85 'Anton';letter-spacing:-2px;text-transform:uppercase;-webkit-text-stroke:3px var(--k);color:var(--w);paint-order:stroke fill;text-shadow:7px 7px 0 var(--k)}
+.issue{font:800 13px 'Archivo';letter-spacing:.1em;margin-bottom:8px}
+.issue b{display:block;font:400 30px 'Anton'}
+.price{position:absolute;right:0;top:18px;width:100px;height:100px;border-radius:50%;background:var(--w);border:4px solid var(--k);display:grid;place-items:center;text-align:center;font:400 14px 'Mochiy Pop One';transform:rotate(14deg)}
+.price b{display:block;font:400 26px 'Anton';color:var(--r)}
+.bar{display:flex;gap:10px;align-items:center;padding:14px 0}
+.bar a{font:400 18px 'Anton';letter-spacing:.06em;color:var(--k);text-decoration:none;background:var(--w);border:3px solid var(--k);padding:4px 14px;transform:skewX(-10deg)}
+.bar a.on{background:var(--k);color:var(--y)}
+.srch{margin-left:auto;position:relative;width:340px}
+.srch input{width:100%;font:800 16px 'Archivo';border:4px solid var(--k);padding:10px 14px;outline:none;transform:skewX(-6deg);box-shadow:5px 5px 0 var(--k)}
+.results{position:absolute;top:56px;left:0;right:0;background:var(--w);border:4px solid var(--k);z-index:5;display:none;box-shadow:6px 6px 0 var(--k)}
+.results.show{display:block}
+.results div{display:flex;gap:10px;align-items:center;padding:6px 10px;cursor:pointer;border-bottom:2px solid var(--k)}
+.results div:hover{background:var(--y)}
+.results img{width:34px;height:48px}
+.results small{display:block}
+
+.cover{position:relative;height:460px;border:10px solid var(--w);outline:5px solid var(--k);margin-top:14px;transform:rotate(-1deg);background:var(--k)}
+.cover:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.65),transparent 55%)}
+.cover h1{position:absolute;z-index:2;left:24px;bottom:74px;max-width:72%;font:400 clamp(38px,4.6vw,62px)/.92 'Anton';text-transform:uppercase;color:var(--y);-webkit-text-stroke:3px var(--k);paint-order:stroke fill;transform:rotate(-3deg);text-shadow:6px 6px 0 var(--k)}
+.cover .sub{position:absolute;z-index:2;left:28px;bottom:20px;background:var(--r);color:#fff;font:400 18px 'Anton';padding:4px 12px;letter-spacing:.05em}
+.burst{position:absolute;z-index:3;right:-26px;top:-30px;width:170px;height:170px;background:var(--r);color:#fff;display:grid;place-items:center;text-align:center;font:400 22px/1 'Anton';transform:rotate(12deg);
+  clip-path:polygon(50% 0,61% 18%,80% 7%,79% 29%,100% 30%,86% 47%,100% 63%,79% 68%,82% 91%,61% 82%,50% 100%,39% 82%,18% 92%,21% 69%,0 63%,14% 47%,0 30%,21% 29%,20% 7%,39% 18%)}
+.burst b{display:block;font-size:40px}
+.vjp{position:absolute;z-index:2;right:24px;bottom:24px;writing-mode:vertical-rl;font:400 30px 'Mochiy Pop One';color:#fff;-webkit-text-stroke:2px var(--k);paint-order:stroke fill}
+
+h2{display:inline-block;margin:56px 0 18px;font:400 40px 'Anton';text-transform:uppercase;background:var(--k);color:var(--y);padding:2px 18px 2px 14px;transform:skewX(-10deg);box-shadow:6px 6px 0 var(--r)}
+h2 small{font:400 15px 'Mochiy Pop One';color:#fff;margin-left:10px}
+
+.rank{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}
+.no1{position:relative;border:5px solid var(--k);background:var(--w);box-shadow:8px 8px 0 var(--k);min-height:420px}
+.no1 img{position:absolute;inset:0}
+.no1 .n{position:absolute;left:-6px;top:-14px;font:400 120px/1 'Anton';color:var(--r);-webkit-text-stroke:4px var(--k);paint-order:stroke fill}
+.no1 .cap{position:absolute;left:0;right:0;bottom:0;background:var(--k);color:#fff;padding:12px 16px;font:400 24px 'Anton';text-transform:uppercase}
+.no1 .cap small{display:block;font:800 13px 'Archivo';color:var(--y);text-transform:none}
+.list{display:flex;flex-direction:column;gap:8px}
+.it{display:grid;grid-template-columns:58px 46px 1fr 120px;gap:12px;align-items:center;background:var(--w);border:3px solid var(--k);padding:6px 10px 6px 6px;cursor:pointer;transition:.15s}
+.it:hover{transform:translateX(6px) skewX(-3deg);background:var(--k);color:#fff}
+.it .n{font:400 34px 'Anton';text-align:center}
+.it img{height:62px;border:2px solid var(--k)}
+.it b{font-weight:800;font-size:15px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it small{font-size:12px}
+.pill{display:inline-block;background:var(--b);color:#fff;font:800 11px 'Archivo';padding:2px 7px;margin-right:6px;transform:skewX(-10deg)}
+.meter{height:12px;border:2px solid currentColor;transform:skewX(-20deg)}
+.meter span{display:block;height:100%;background:var(--r)}
+
+.arcs{display:flex;gap:22px;padding:10px 0}
+.arc{flex:1;position:relative;border:5px solid var(--k);background:var(--w);box-shadow:7px 7px 0 var(--k)}
+.arc:nth-child(odd){transform:rotate(-1.5deg)}.arc:nth-child(even){transform:rotate(1.2deg)}
+.arc .im{height:170px;border-bottom:5px solid var(--k)}
+.arc .body{padding:14px 14px 18px}
+.arc .ep{font:400 15px 'Anton';color:var(--r);letter-spacing:.06em}
+.arc h3{font:400 24px/1.05 'Anton';text-transform:uppercase;margin:4px 0 12px}
+.arc .sc{display:flex;gap:10px;align-items:center}
+.star{width:76px;height:76px;background:var(--y);display:grid;place-items:center;font:400 26px 'Anton';border:0;
+  clip-path:polygon(50% 0,61% 18%,80% 7%,79% 29%,100% 30%,86% 47%,100% 63%,79% 68%,82% 91%,61% 82%,50% 100%,39% 82%,18% 92%,21% 69%,0 63%,14% 47%,0 30%,21% 29%,20% 7%,39% 18%)}
+.say{position:relative;background:var(--w);border:3px solid var(--k);border-radius:20px;padding:6px 12px;font:400 15px 'Mochiy Pop One'}
+.say:before{content:'';position:absolute;left:-12px;top:12px;border:7px solid transparent;border-right:10px solid var(--k)}
+.arc.cur{outline:6px solid var(--r);outline-offset:4px}
+.arc.cur:after{content:'READING NOW!';position:absolute;top:-16px;right:12px;background:var(--r);color:#fff;font:400 14px 'Anton';padding:3px 10px;letter-spacing:.05em}
+
+.torn{background:var(--w);padding:40px 26px;margin-top:6px;clip-path:polygon(0 4%,4% 0,9% 3%,14% 0,20% 4%,26% 1%,32% 4%,38% 0,45% 3%,52% 0,58% 4%,64% 1%,70% 4%,77% 0,83% 3%,89% 0,95% 4%,100% 1%,100% 96%,95% 100%,89% 97%,83% 100%,77% 96%,70% 100%,64% 96%,58% 100%,52% 97%,45% 100%,38% 96%,32% 100%,26% 97%,20% 100%,14% 96%,9% 100%,4% 97%,0 100%)}
+.torn p{font:800 15px 'Archivo';margin-bottom:16px}
+.torn p em{font-style:normal;background:var(--y);padding:0 4px}
+.strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px}
+.pv{flex:0 0 140px;cursor:pointer}
+.pv .im{height:200px;border:4px solid var(--k);transition:.2s}
+.pv:hover .im{transform:rotate(-3deg) scale(1.05);box-shadow:6px 6px 0 var(--r)}
+.pv b{display:block;font:400 15px/1.1 'Anton';text-transform:uppercase;margin-top:8px}
+.pv small{font-weight:800;color:var(--r)}
+.badge{position:fixed;bottom:14px;right:14px;z-index:9;background:var(--k);color:var(--y);font:400 15px 'Anton';letter-spacing:.06em;padding:8px 14px}
+@media(max-width:800px){.title{font-size:56px}.price{display:none}.bar{flex-wrap:wrap}.srch{width:100%}.rank{grid-template-columns:1fr}.arcs{flex-direction:column}.cover h1{font-size:44px}.it{grid-template-columns:44px 40px 1fr}.it .meter{display:none}}
+</style>
+</head>
+<body>
+<div class="speed"></div>
+<div class="wrap">
+  <header class="mast">
+    <div class="wk">週刊</div>
+    <div class="title">Miru<br>Weekly</div>
+    <div class="issue">YOUR ANIME LOG<b id="issue">No.42</b></div>
+    <div class="price">ALWAYS<b>¥0</b>FREE</div>
+  </header>
+  <div class="bar"><a class="on" href="#">LIBRARY</a><a href="#">DISCOVER</a><a href="#">STATS</a>
+    <div class="srch"><input id="q" placeholder="TYPE ANY NAME… (jjk!)"><div class="results" id="res"></div></div></div>
+
+  <section class="cover" id="cover"></section>
+
+  <h2>Reader Rankings <small>あなたの順位</small></h2>
+  <section class="rank" id="rank"></section>
+
+  <h2>Story Arcs: JJK <small>シーズン</small></h2>
+  <section class="arcs" id="arcs"></section>
+
+  <h2>Next Issue Preview <small>おすすめ</small></h2>
+  <section class="torn" id="torn"></section>
+</div>
+<div class="badge">MOCKUP C · SHŌNEN WEEKLY</div>
+
+<script src="data.js"></script>
+<script>
+const wk=Math.ceil((new Date()-new Date(new Date().getFullYear(),0,1))/6048e5);
+issue.textContent=`No.${wk} · ${new Date().getFullYear()}`;
+const avg=u=>u.mine.length?u.mine.reduce((a,b)=>a+b,0)/u.mine.length:0;
+
+loadAnime().then(({lib,seasons,recs})=>{
+  const cur=seasons[seasons.length-1],me=ME[113415],nx=cur.nextAiringEpisode;
+  cover.innerHTML=`<img src="${art(cur)}"><h1>${esc(T(cur))}</h1>
+    <div class="sub">SEASON ${seasons.length} · YOU'RE ON EP ${me.ep}!</div>
+    <div class="burst"><span>${nx?`EP ${nx.episode}<b>${Math.ceil(nx.timeUntilAiring/86400)}D</b>LEFT`:`NEXT<b>EP ${me.ep+1}</b>GO!`}</span></div>
+    <div class="vjp">${esc((cur.title.native||'').slice(0,5))}</div>`;
+
+  const ranked=lib.filter(m=>ME[m.id].mine.length).sort((a,b)=>avg(ME[b.id])-avg(ME[a.id]));
+  const [top,...rest]=ranked;
+  rank.innerHTML=`<div class="no1"><img src="${art(top)}"><span class="n">1</span><div class="cap"><small>YOUR #1 · avg ${avg(ME[top.id]).toFixed(1)} across ${ME[top.id].mine.length} seasons</small>${esc(T(top))}</div></div>
+    <div class="list">${rest.slice(0,7).map((m,i)=>{const u=ME[m.id];return `<div class="it"><span class="n">${i+2}</span><img src="${m.coverImage.large}">
+      <span><b>${esc(T(m))}</b><small><span class="pill">S${seasonOf(m)}</span>${STATUS[u.status]}</small></span>
+      <div class="meter"><span style="width:${avg(u)*10}%"></span></div></div>`}).join('')}</div>`;
+
+  arcs.innerHTML=seasons.map((s,i)=>{const mine=me.mine[i];return `<div class="arc ${i===seasons.length-1?'cur':''}">
+    <div class="im"><img src="${art(s)}"></div><div class="body"><div class="ep">SEASON ${i+1} · ${s.seasonYear||'TBA'} · ${s.episodes||'?'} EPS</div>
+    <h3>${esc(T(s))}</h3><div class="sc"><div class="star">${S(s)}</div><div class="say">${mine?`YOU: ${mine}!${mine>=10?'!!':''}`:'not rated yet…'}</div></div></div></div>`}).join('');
+
+  torn.innerHTML=`<p>Because you loved <em>Jujutsu Kaisen</em> and binge <em>${esc(lib[0].genres.slice(0,2).join(' + '))}</em>…</p>
+    <div class="strip">${recs.map(m=>`<div class="pv"><div class="im"><img src="${m.coverImage.extraLarge}"></div><b>${esc(T(m))}</b><small>★ ${S(m)}</small></div>`).join('')}</div>`;
+}).catch(e=>cover.innerHTML=`<h1>OFFLINE</h1><div class="sub">${esc(e.message)}</div>`);
+
+q.addEventListener('input',debounce(async()=>{
+  const r=await searchAnime(q.value).catch(()=>[]);
+  res.innerHTML=r.map(m=>`<div><img src="${m.coverImage.large}"><span><b>${esc(T(m))}</b><small>${m.seasonYear||''} · ${m.format||''} · ★ ${S(m)}</small></span></div>`).join('');
+  res.classList.toggle('show',r.length>0);
+}));
+</script>
+</body>
+</html>
